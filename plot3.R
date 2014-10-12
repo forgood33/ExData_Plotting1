@@ -1,0 +1,20 @@
+temp <- tempfile()
+fileURL <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+download.file(fileURL, temp, method = "wget", mode = "wb")
+data <- read.table(unz(temp, "household_power_consumption.txt"), sep=";", header=TRUE, nrows = 69516)
+unlink(temp)
+data <- data[66637:69516, ]
+data$TD <- strptime(paste(data[, 1], data[, 2], sep=","), format="%d/%m/%Y,%H:%M:%S")
+data[, 7] <- as.numeric(as.character(data[, 7]))
+data[, 8] <- as.numeric(as.character(data[, 8]))
+data[, 9] <- as.numeric(as.character(data[, 9]))
+
+png(file = "plot3.png", width = 480, height = 480)
+plot(data[, 10], data[, 7], xlab = "", ylab = "Energy sub metering", pch = NA_integer_)
+points(data[, 10], data[, 8], pch = NA_integer_)
+points(data[, 10], data[, 9], pch = NA_integer_)
+lines(data[, 10], data[, 7], col = "black")
+lines(data[, 10], data[, 8], col = "red")
+lines(data[, 10], data[, 9], col = "blue")
+legend("topright", pch = '-', lwd = 2, col = c("black", "red", "blue"), legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+dev.off()
